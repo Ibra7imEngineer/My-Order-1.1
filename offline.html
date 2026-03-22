@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>الخدمة غير متوفرة - My Order</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo" data-action="navigate" data-target="home-page">
+          <i class="fa-solid fa-utensils"></i>
+          <span>My Order</span>
+        </div>
+        <button
+          class="hamburger-menu"
+          id="hamburgerMenu"
+          aria-label="فتح القائمة"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        <div class="mobile-nav-menu" id="mobileNavMenu">
+          <div class="mobile-nav-header">
+            <h3>My Order</h3>
+            <button
+              class="close-menu"
+              id="closeMenu"
+              aria-label="إغلاق القائمة"
+            >
+              &times;
+            </button>
+          </div>
+          <ul class="mobile-nav-links">
+            <li>
+              <a href="index.html" class="mobile-nav-link">🏠 الرئيسية</a>
+            </li>
+            <li>
+              <a href="index.html#menu-page" class="mobile-nav-link"
+                >🍽️ المنيو</a
+              >
+            </li>
+            <li>
+              <a href="index.html#orders-page" class="mobile-nav-link"
+                >📦 طلباتي</a
+              >
+            </li>
+            <li>
+              <a href="index.html#about-page" class="mobile-nav-link"
+                >ℹ️ عن الموقع</a
+              >
+            </li>
+            <li>
+              <a href="index.html#contact-page" class="mobile-nav-link"
+                >📞 تواصل معنا</a
+              >
+            </li>
+          </ul>
+          <div class="mobile-nav-actions">
+            <button class="mobile-nav-btn cart-btn" title="اذهب إلى السلة">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span>السلة</span>
+              <span class="cart-badge" id="cart-count-mobile">0</span>
+            </button>
+            <button class="mobile-nav-btn user-btn" title="حسابي">
+              <i class="fa-solid fa-circle-user"></i>
+              <span>حسابي</span>
+            </button>
+            <button class="mobile-nav-btn admin-btn" title="لوحة الإدارة">
+              <i class="fa-solid fa-gear"></i>
+              <span>الإدارة</span>
+            </button>
+          </div>
+        </div>
+        <ul class="nav-links">
+          <li><span class="nav-icon">🏠</span> الرئيسية</li>
+          <li><span class="nav-icon">🍽️</span> المنيو</li>
+          <li><span class="nav-icon">📦</span> طلباتي</li>
+          <li><span class="nav-icon">ℹ️</span> عن الموقع</li>
+          <li><span class="nav-icon">📞</span> تواصل معنا</li>
+        </ul>
+        <div class="nav-icons">
+          <div class="cart-icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="cart-count">0</span>
+          </div>
+          <div class="user-icon">
+            <i class="fa-solid fa-circle-user"></i>
+          </div>
+          <div class="admin-toggle" title="لوحة الإدارة القديمة">
+            <i class="fa-solid fa-gear"></i>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main class="container text-center py-5">
+      <i class="fas fa-server-slash fa-5x mb-4" style="color: #9ca3af"></i>
+      <h1>الخدمة غير متوفرة حالياً - السيرفر مغلق</h1>
+      <p>
+        بإمكانك تصفح الواجهة الثابتة مع فقدان بعض الوظائف التي تعتمد على الخادم.
+      </p>
+      <a href="index.html" class="btn btn-primary mt-3">العودة للرئيسية</a>
+    </main>
+    <footer class="text-center py-4"><small>© 2026 My Order</small></footer>
+    <script src="script.js"></script>
+  </body>
+</html>

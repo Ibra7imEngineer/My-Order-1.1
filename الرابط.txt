@@ -1,0 +1,2 @@
+الموقع الرئيسي: http://localhost/My-Order-main/
+لوحة الإدارة: http://localhost/My-Order-main/admin/
