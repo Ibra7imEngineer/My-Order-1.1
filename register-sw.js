@@ -6,15 +6,15 @@ if ("serviceWorker" in navigator) {
     // Check if running on file:// protocol
     if (window.location.protocol === "file:") {
       console.warn("⚠️ Service Worker cannot register on file:// protocol.");
-      console.info("💡 To use Service Worker, run the app on a local server:");
-      console.info("   • Using Live Server (VS Code extension)");
-      console.info("   • Or: python -m http.server 8000");
-      console.info("   • Or: npx http-server (requires Node.js)");
+      console.info("💡 Service Worker requires HTTP/HTTPS.");
+      console.info(
+        "   Host the app on a static server or deploy it to a hosting provider.",
+      );
       return;
     }
 
     navigator.serviceWorker
-      .register("./sw.js", { scope: "/" })
+      .register("./sw.js")
       .then(function (reg) {
         console.log(
           "✅ Service Worker registered successfully (scope):",
@@ -25,7 +25,7 @@ if ("serviceWorker" in navigator) {
         console.warn("⚠️ Service Worker registration failed:", err.message);
         if (err.message.includes("Unsupported protocol")) {
           console.info(
-            "💡 Service Workers require HTTP/HTTPS. Use a local server instead of file://",
+            "💡 Service Workers require HTTP/HTTPS. Host the app on a static server or deploy it to a hosting provider instead of file://",
           );
         }
       });

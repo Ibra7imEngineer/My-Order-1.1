@@ -1,0 +1,43 @@
+# Security: Files to add to .gitignore
+# These files contain sensitive information and should NOT be committed to Git
+
+# Environment configuration with API keys
+.env.php
+.env.local
+.env*.local
+
+# Environment variables
+.env
+*.env
+
+# Sensitive files
+config/secrets.php
+config/api-keys.php
+secrets/
+
+# Logs that might contain sensitive data
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp
+
+# IDE files (optional but recommended)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if using)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Common development files
+debug.log
+composer.lock

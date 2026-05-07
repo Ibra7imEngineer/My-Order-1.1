@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ترحيل القائمة من Google Sheets إلى MySQL</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 700px;
+        width: 100%;
+        padding: 40px;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 28px;
+        text-align: center;
+      }
+
+      .subtitle {
+        color: #666;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .info-box {
+        background: #f0f7ff;
+        border-right: 4px solid #667eea;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 25px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .results {
+        display: none;
+        margin-top: 25px;
+      }
+
+      .results.show {
+        display: block;
+      }
+
+      .result-header {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        color: white;
+      }
+
+      .result-header.success {
+        background: #10b981;
+      }
+
+      .result-header.error {
+        background: #ef4444;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .stat-box {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: #666;
+      }
+
+      .list-section {
+        margin-bottom: 20px;
+      }
+
+      .list-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .list-items {
+        max-height: 400px;
+        overflow-y: auto;
+        font-size: 13px;
+      }
+
+      .list-item {
+        padding: 8px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #555;
+      }
+
+      .list-item:last-child {
+        border-bottom: none;
+      }
+
+      .error-item {
+        background: #fff5f5;
+        color: #c00;
+      }
+
+      .success-item {
+        background: #f5fff7;
+        color: #060;
+      }
+
+      .duplicate-item {
+        background: #fffaf0;
+        color: #996633;
+      }
+
+      .message {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+
+      .message.info {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .message.error {
+        background: #ffebee;
+        color: #d32f2f;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 ترحيل القائمة</h1>
+      <p class="subtitle">نقل المنتجات من Google Sheets إلى MySQL</p>
+
+      <div class="info-box">
+        ℹ️ هذا البرنامج سيجلب جميع عناصر المنيو من Google Sheets ويحفظها في
+        قاعدة البيانات المحلية.
+        <br /><br />
+        الأداة توفر:
+        <ul style="margin-top: 10px; padding-right: 20px">
+          <li>✅ منع التكرار (الحفظ مرة واحدة فقط)</li>
+          <li>✅ دعم صيغ مختلفة للبيانات</li>
+          <li>✅ تقرير مفصل عن عملية الترحيل</li>
+        </ul>
+      </div>
+
+      <div class="button-group">
+        <button
+          class="btn btn-primary"
+          id="migrateBtn"
+          onclick="startMigration()"
+        >
+          🚀 ابدأ الترحيل
+        </button>
+        <button
+          class="btn btn-secondary"
+          id="resetBtn"
+          onclick="resetForm()"
+          style="display: none"
+        >
+          🔄 إعادة تعيين
+        </button>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>جاري معالجة البيانات... ⏳</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="result-header" id="resultHeader"></div>
+
+        <div class="stats" id="stats"></div>
+
+        <div id="messages"></div>
+
+        <div class="list-section" id="insertedSection" style="display: none">
+          <div class="list-title">✅ المنتجات المضافة</div>
+          <div class="list-items" id="insertedList"></div>
+        </div>
+
+        <div class="list-section" id="duplicateSection" style="display: none">
+          <div class="list-title">⚠️ المنتجات المكررة (تم تخطيها)</div>
+          <div class="list-items" id="duplicateList"></div>
+        </div>
+
+        <div class="list-section" id="failedSection" style="display: none">
+          <div class="list-title">❌ المنتجات التي فشل حفظها</div>
+          <div class="list-items" id="failedList"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function startMigration() {
+        const btn = document.getElementById("migrateBtn");
+        const loading = document.getElementById("loading");
+        const results = document.getElementById("results");
+        const resetBtn = document.getElementById("resetBtn");
+
+        btn.disabled = true;
+        loading.style.display = "block";
+        results.classList.remove("show");
+
+        try {
+          const response = await fetch("scripts/migrate_menu_to_mysql.php");
+          const data = await response.json();
+
+          loading.style.display = "none";
+          displayResults(data);
+
+          btn.style.display = "none";
+          resetBtn.style.display = "block";
+        } catch (error) {
+          loading.style.display = "none";
+          alert("❌ خطأ في الاتصال: " + error.message);
+          btn.disabled = false;
+        }
+      }
+
+      function displayResults(data) {
+        const results = document.getElementById("results");
+        const header = document.getElementById("resultHeader");
+        const stats = document.getElementById("stats");
+        const messages = document.getElementById("messages");
+
+        results.classList.add("show");
+
+        // Header
+        header.className =
+          "result-header " + (data.status === "success" ? "success" : "error");
+        header.textContent = data.message;
+
+        // Stats
+        stats.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-number">${data.totalItems}</div>
+                    <div class="stat-label">إجمالي المنتجات</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color: #10b981;">${data.insertedItems}</div>
+                    <div class="stat-label">تم إضافتها</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color: #f59e0b;">${data.duplicateItems}</div>
+                    <div class="stat-label">مكررة مخطوط</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color: #ef4444;">${data.failedItems}</div>
+                    <div class="stat-label">فشل</div>
+                </div>
+            `;
+
+        // Messages
+        messages.innerHTML = "";
+        if (data.errors && data.errors.length > 0) {
+          messages.innerHTML +=
+            '<div class="message error">' + data.errors.join("<br>") + "</div>";
+        }
+
+        // Inserted items
+        if (data.insertedItemsList && data.insertedItemsList.length > 0) {
+          document.getElementById("insertedSection").style.display = "block";
+          const html = data.insertedItemsList
+            .map(
+              (item) => `<div class="list-item success-item">
+                        <strong>${item.item_name}</strong> - ${item.unit_price} ج.م (${item.category})
+                    </div>`,
+            )
+            .join("");
+          document.getElementById("insertedList").innerHTML = html;
+        }
+
+        // Duplicate items
+        if (data.duplicateItemsList && data.duplicateItemsList.length > 0) {
+          document.getElementById("duplicateSection").style.display = "block";
+          const html = data.duplicateItemsList
+            .map(
+              (item) => `<div class="list-item duplicate-item">
+                        <strong>${item.item_name}</strong> (${item.category})
+                    </div>`,
+            )
+            .join("");
+          document.getElementById("duplicateList").innerHTML = html;
+        }
+
+        // Failed items
+        if (data.failedItemsList && data.failedItemsList.length > 0) {
+          document.getElementById("failedSection").style.display = "block";
+          const html = data.failedItemsList
+            .map(
+              (item) => `<div class="list-item error-item">
+                        <strong>${JSON.stringify(item.item).substring(0, 50)}...</strong><br>
+                        خطأ: ${item.error}
+                    </div>`,
+            )
+            .join("");
+          document.getElementById("failedList").innerHTML = html;
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("migrateBtn").disabled = false;
+        document.getElementById("migrateBtn").style.display = "block";
+        document.getElementById("resetBtn").style.display = "none";
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("results").classList.remove("show");
+      }
+    </script>
+  </body>
+</html>
